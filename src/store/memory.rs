@@ -7,17 +7,26 @@ pub struct Memory {
 }
 
 impl Store for Memory {
+    fn new() -> anyhow::Result<Memory> {
+        Ok(Memory {
+            inner: BTreeMap::new(),
+        })
+    }
     fn get(&mut self, key: &str) -> anyhow::Result<&Vec<u8>> {
         self.inner
             .get(key)
             .ok_or(anyhow::Error::msg("No key found."))
     }
-    fn set(&mut self, key: &str, val: &str) -> anyhow::Result<()> {
-        self.inner.insert(key.to_string(), serialize(key, val)?);
-        Ok(())
+    fn set(&mut self, key: &str, val: &str) -> anyhow::Result<&mut Vec<u8>> {
+        Ok(self
+            .inner
+            .entry(key.to_string())
+            .or_insert(serialize(key, val)?))
     }
-    fn remove(&mut self, key: &str) -> Option<Vec<u8>> {
-        self.inner.remove(key)
+    fn remove(&mut self, key: &str) -> anyhow::Result<Vec<u8>> {
+        self.inner
+            .remove(key)
+            .ok_or(anyhow::Error::msg("No Key found"))
     }
 }
 
