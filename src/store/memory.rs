@@ -8,11 +8,13 @@ pub struct Memory {
 
 impl Store for Memory {
     fn new() -> Memory {
+        Self::log("new", "", "", "InMemory");
         Memory {
             inner: BTreeMap::new(),
         }
     }
     fn get(&mut self, key: &str) -> anyhow::Result<&[u8]> {
+        Self::log("get", key, "", "InMemory");
         let r = self
             .inner
             .get(key)
@@ -20,12 +22,14 @@ impl Store for Memory {
         Ok(r.as_ref())
     }
     fn set(&mut self, key: &str, val: &str) -> anyhow::Result<&[u8]> {
+        Self::log("set", key, val, "InMemory");
         self.inner
             .entry(key.to_string())
             .or_insert(serialize(key, val)?);
         self.get(key)
     }
     fn remove(&mut self, key: &str) -> anyhow::Result<Vec<u8>> {
+        Self::log("remove", key, "", "InMemory");
         self.inner
             .remove(key)
             .ok_or(anyhow::Error::msg("No Key found"))
