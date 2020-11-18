@@ -1,7 +1,7 @@
-use keev::{store::Store, KeevDB};
+use keev::{new, store::Store, KeevDB};
 use std::io;
 fn main() -> anyhow::Result<()> {
-    let mut db = KeevDB::new()?;
+    let mut db = new::<KeevDB>(keev::store::DBType::Persistant);
     loop {
         let mut input = String::new();
         match io::stdin().read_line(&mut input) {
